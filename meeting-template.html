@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HC Trade-In · [DATE]</title>
+<style>
+  :root {
+    --brand: #1a3a6b;
+    --accent: #c8102e;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --border: #dce1ea;
+    --text: #1e2533;
+    --muted: #6b7794;
+    --edit-bg: #fffbea;
+    --edit-border: #f0c040;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+  .topbar { background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 12px 28px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .back-btn { background: rgba(255,255,255,.15); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .back-btn:hover { background: rgba(255,255,255,.25); }
+  .topbar-title { font-size: 15px; font-weight: 700; }
+  .topbar-date { font-size: 12px; opacity: .7; margin-top: 1px; }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  button { cursor: pointer; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; padding: 7px 16px; transition: background .15s; }
+  #editToggle { background: #fff; color: var(--brand); }
+  #editToggle.active { background: var(--edit-border); color: #7a4f00; }
+  #saveBtn { background: #26c65a; color: #fff; display: none; }
+  #publishBtn { background: #2563eb; color: #fff; }
+  #publishBtn:hover { background: #1d4ed8; }
+  #resetBtn { background: transparent; color: rgba(255,255,255,.75); border: 1px solid rgba(255,255,255,.4); font-size: 12px; padding: 6px 12px; }
+  .save-indicator { font-size: 12px; color: rgba(255,255,255,.7); display: none; }
+  .save-indicator.show { display: block; }
+
+  .container { max-width: 760px; margin: 36px auto; padding: 0 24px 80px; }
+  .doc-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+  .doc-header { background: var(--brand); color: #fff; padding: 24px 28px 20px; }
+  .doc-header .badge { display: inline-block; background: rgba(255,255,255,.2); border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .5px; padding: 2px 8px; margin-bottom: 10px; text-transform: uppercase; }
+  .doc-header h2 { font-size: 20px; font-weight: 800; }
+  .doc-header .meta { margin-top: 6px; font-size: 13px; opacity: .8; }
+  .doc-body { padding: 28px; }
+
+  .section { margin-bottom: 30px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--brand); border-bottom: 2px solid var(--brand); padding-bottom: 6px; margin-bottom: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #f0f3f8; color: var(--brand); font-weight: 700; text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+  td:first-child { font-weight: 500; width: 42%; }
+
+  .tag { display: inline-block; border-radius: 4px; font-size: 11px; font-weight: 700; padding: 3px 9px; line-height: 1.5; }
+  .tag-pending { background: #fff0f0; color: #c8102e; }
+  .tag-updated { background: #f0fff4; color: #1a7a3c; }
+  .tag-standby { background: #fff8e6; color: #a06000; }
+
+  ul.list { list-style: none; padding: 0; }
+  ul.list li { padding: 7px 0 7px 20px; position: relative; border-bottom: 1px solid #f0f3f8; font-size: 13px; }
+  ul.list li:last-child { border-bottom: none; }
+  ul.list li::before { content: '›'; position: absolute; left: 4px; color: var(--brand); font-weight: 700; }
+
+  .note { background: #f8f9fc; border-left: 3px solid var(--brand); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12.5px; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .notes-area { min-height: 120px; font-size: 13px; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 12px; background: #fafbfd; }
+  .doc-footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-style: italic; }
+
+  body.edit-mode [contenteditable] { background: var(--edit-bg); border: 1px dashed var(--edit-border); border-radius: 4px; padding: 2px 4px; outline: none; }
+  body.edit-mode [contenteditable]:focus { border-color: #d4a00f; box-shadow: 0 0 0 2px rgba(240,192,64,.25); }
+  .edit-hint { display: none; font-size: 11px; color: #c8a020; font-style: italic; margin-bottom: 10px; font-weight: 600; }
+  body.edit-mode .edit-hint { display: block; }
+</style>
+</head>
+<body>
+
+<!-- SETUP INSTRUCTIONS (delete this comment block before use):
+  1. Save this file as: meeting-[mon][day]-[year].html  e.g. meeting-jun10-2025.html
+  2. Replace all [DATE] placeholders below with the actual meeting date
+  3. Replace STORAGE_KEY value at the bottom with a unique string e.g. 'hc_jun10_2025_v1'
+  4. Add a new card to index.html pointing to this file
+  5. Upload to GitHub
+-->
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="back-btn" href="index.html">← All Meetings</a>
+    <div>
+      <div class="topbar-title">Pre-Launch Alignment Meeting</div>
+      <div class="topbar-date">[DATE]</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span class="save-indicator" id="saveIndicator">✓ Saved</span>
+    <button id="resetBtn" onclick="resetEdits()">Reset</button>
+    <button id="saveBtn" onclick="saveEdits()">💾 Save notes</button>
+    <button id="publishBtn" onclick="publishPage()">⬆ Publish update</button>
+    <button id="editToggle" onclick="toggleEdit()">✏️ Edit mode</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="doc-card">
+    <div class="doc-header">
+      <div class="badge">Status Update · [DATE]</div>
+      <h2>Home Credit Trade-In Program</h2>
+      <div class="meta">📅 Pre-Launch Alignment Meeting &nbsp;·&nbsp; Protech Devices</div>
+    </div>
+    <div class="doc-body">
+      <span class="edit-hint">✏️ Edit mode is on — click any field to edit</span>
+
+      <div class="section">
+        <div class="section-title">1. Document Status Update</div>
+        <p style="font-size:13px;margin-bottom:10px;">The following four (4) agreements are under review. Requesting formal status update from client's Legal and Finance teams.</p>
+        <table>
+          <thead><tr><th>Document</th><th>Status / Action Needed</th></tr></thead>
+          <tbody>
+            <tr><td>MOA on Trade-In</td><td><span class="tag tag-pending" contenteditable="false">Awaiting Legal &amp; Finance Feedback</span></td></tr>
+            <tr><td>Dealer Cooperation Agreement (DCA)</td><td><span class="tag tag-pending" contenteditable="false">Awaiting Legal &amp; Finance Feedback</span></td></tr>
+            <tr><td>Trade-In Retailer Agreement</td><td><span class="tag tag-pending" contenteditable="false">Awaiting Legal &amp; Finance Feedback</span></td></tr>
+            <tr><td>Trade-In Customer Agreement</td><td><span class="tag tag-pending" contenteditable="false">Awaiting Legal &amp; Finance Feedback</span></td></tr>
+          </tbody>
+        </table>
+        <div class="note" contenteditable="false">Add notes on document updates here.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">2. Process Flow Feedback</div>
+        <ul class="list">
+          <li contenteditable="false">Overall flow — any steps to add, remove, or revise?</li>
+          <li contenteditable="false">Roles and responsibilities — are designated actors correct?</li>
+          <li contenteditable="false">Pain points or bottlenecks identified during the walk-through</li>
+          <li contenteditable="false">Final sign-off on the process before store rollout</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3. 15 Stores (POSes) — Launch Readiness</div>
+        <p style="margin-bottom:8px;"><span class="tag tag-standby">On Standby</span></p>
+        <ul class="list">
+          <li contenteditable="false">Training deck preparation &amp; training deployment plan (internal)</li>
+          <li contenteditable="false">Onboarding and store-level orientation (HC Agent &amp; Retailer Staff)</li>
+          <li contenteditable="false">Staff training on the Trade-In process and app usage</li>
+          <li contenteditable="false">Compliance briefing (anti-fencing, documentation requirements, reverse operations)</li>
+          <li contenteditable="false">Systems readiness check and UAT participation</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Meeting Notes</div>
+        <div class="notes-area" contenteditable="false" id="notes">Add meeting notes here…</div>
+      </div>
+
+      <div class="doc-footer">
+        <span>Protech Devices</span>
+        <span>CONFIDENTIAL — FOR DISCUSSION ONLY</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'hc_[DATE_UNIQUE]_v1'; // ← CHANGE THIS to something unique per meeting
+  let isEditing = false;
+  function toggleEdit() {
+    isEditing = !isEditing;
+    document.body.classList.toggle('edit-mode', isEditing);
+    const btn = document.getElementById('editToggle');
+    btn.textContent = isEditing ? '🔒 Exit edit mode' : '✏️ Edit mode';
+    btn.classList.toggle('active', isEditing);
+    document.getElementById('saveBtn').style.display = isEditing ? 'inline-block' : 'none';
+    document.querySelectorAll('[contenteditable]').forEach(el => { el.contentEditable = isEditing ? 'true' : 'false'; });
+  }
+  function saveEdits() {
+    const data = {};
+    document.querySelectorAll('[contenteditable]').forEach((el, i) => { data[el.id || 'el_' + i] = el.innerHTML; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const ind = document.getElementById('saveIndicator');
+    ind.classList.add('show');
+    setTimeout(() => ind.classList.remove('show'), 2500);
+  }
+  function loadEdits() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      document.querySelectorAll('[contenteditable]').forEach((el, i) => { const k = el.id || 'el_' + i; if (data[k]) el.innerHTML = data[k]; });
+    } catch(e) {}
+  }
+  function resetEdits() {
+    if (!confirm('Reset all edits to original content?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+  function publishPage() {
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
+    clone.querySelectorAll('script').forEach(s => {
+      s.textContent = s.textContent.replace(/window\.addEventListener\('DOMContentLoaded', loadEdits\);/, '');
+    });
+    const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = document.title.replace(/[^a-z0-9\-]/gi, '-').toLowerCase() + '.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  setInterval(() => { if (isEditing) saveEdits(); }, 30000);
+  window.addEventListener('DOMContentLoaded', loadEdits);
+</script>
+</body>
+</html>

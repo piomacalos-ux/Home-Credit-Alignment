@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Credit Trade-In Program — Meeting Updates</title>
+<style>
+  :root {
+    --brand: #1a3a6b;
+    --accent: #c8102e;
+    --bg: #f0f3f8;
+    --card: #ffffff;
+    --border: #dce1ea;
+    --text: #1e2533;
+    --muted: #6b7794;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--brand);
+    color: #fff;
+    padding: 48px 32px 40px;
+    text-align: center;
+  }
+  .header .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: .65;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: .7;
+  }
+
+  /* Meeting grid */
+  .container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 24px 80px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .meetings {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .meeting-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow .15s, transform .1s, border-color .15s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  }
+  .meeting-card:hover {
+    box-shadow: 0 4px 16px rgba(26,58,107,.12);
+    transform: translateY(-1px);
+    border-color: #b0bdd4;
+  }
+  .meeting-card:active { transform: translateY(0); }
+
+  .date-block {
+    background: var(--brand);
+    color: #fff;
+    border-radius: 10px;
+    width: 58px;
+    min-width: 58px;
+    height: 58px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+  }
+  .date-block .month {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: .8;
+  }
+  .date-block .day {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .meeting-info { flex: 1; }
+  .meeting-info .title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .meeting-info .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .meeting-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .tag {
+    display: inline-block;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+  }
+  .tag-active   { background: #e8f5e9; color: #1a7a3c; }
+  .tag-review   { background: #fff3e0; color: #a06000; }
+  .tag-complete { background: #f0f3f8; color: #6b7794; }
+
+  .arrow {
+    color: #b0bdd4;
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  /* Add new meeting hint */
+  .add-hint {
+    margin-top: 28px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 20px 26px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .add-hint strong { display: block; font-size: 14px; margin-bottom: 4px; color: #8a96b0; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    background: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">Protech Devices · Confidential</div>
+  <h1>Home Credit Trade-In Program</h1>
+  <p>Pre-Launch Alignment Meetings · Status Updates</p>
+</div>
+
+<div class="container">
+  <div class="section-label">Meeting Sessions</div>
+
+  <div class="meetings">
+
+    <!-- Meeting: June 3, 2025 (most recent first) -->
+    <a class="meeting-card" href="meeting-jun3-2025.html">
+      <div class="date-block">
+        <div class="month">Jun</div>
+        <div class="day">3</div>
+      </div>
+      <div class="meeting-info">
+        <div class="title">Pre-Launch Alignment Meeting</div>
+        <div class="subtitle">Phase 1 &amp; 2 Process Flow · Store Launch Readiness · Document Review</div>
+      </div>
+      <div class="meeting-meta">
+        <span class="tag tag-active">Active</span>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+    <!-- Meeting: May 29, 2025 -->
+    <a class="meeting-card" href="meeting-may29-2025.html">
+      <div class="date-block">
+        <div class="month">May</div>
+        <div class="day">29</div>
+      </div>
+      <div class="meeting-info">
+        <div class="title">Pre-Launch Alignment Meeting</div>
+        <div class="subtitle">Phase 1 Process Flow · Initial Document Review</div>
+      </div>
+      <div class="meeting-meta">
+        <span class="tag tag-review">In Review</span>
+      </div>
+      <div class="arrow">›</div>
+    </a>
+
+  </div>
+
+  <!-- Placeholder for future meetings -->
+  <div class="add-hint">
+    <strong>+ Add future meetings</strong>
+    Duplicate a meeting file and add a new card above for each new session.
+  </div>
+
+</div>
+
+<div class="footer">
+  Protech Devices Retailer Operations &nbsp;·&nbsp; CONFIDENTIAL — FOR DISCUSSION ONLY
+</div>
+
+</body>
+</html>
